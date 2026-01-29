@@ -1,0 +1,39 @@
+# 根据 schema 提供自动补全
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+$os \
+$username@$hostname \
+$directory \
+$time
+"""
+
+palette = 'Nord'
+[palettes.Nord]
+white = '#ECEFF4'
+blue = '#5E81AC'
+
+[character]
+success_symbol = '➜'
+
+[time]
+disabled = false
+
+[os]
+disabled = false
+
+[os.symbols]
+Windows = ""
+Macos = "󰀵"
+Ubuntu = "󰕈"
+Debian = "󰣚"
+
+[username]
+style_user = 'blue bold'
+format = '[$user]($style)'
+
+[hostname]
+ssh_only = false
+ssh_symbol = ''
+format = '[$hostname]($style) in'
+style = 'blue bold'
