@@ -31,6 +31,7 @@ Debian = "󰣚"
 [username]
 style_user = 'blue bold'
 format = '[$user]($style)'
+show_always = true
 
 [hostname]
 ssh_only = false
