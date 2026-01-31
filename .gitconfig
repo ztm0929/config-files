@@ -1,0 +1,18 @@
+[user]
+	name = Kevin Zhang
+	email = ztm0929@icloud.com
+
+[core]
+	editor = nvim
+
+[credential]
+	helper = manager-core
+
+[filter "lfs"]
+        smudge = git-lfs smudge -- %f
+        process = git-lfs filter-process
+        clean = git-lfs clean -- %f
+        required = true
+
+[safe]
+	directory = ~
