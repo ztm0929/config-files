@@ -4,6 +4,7 @@ export all_proxy=socks5://127.0.0.1:7890
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
+alias ls='ls --color'
 alias lzd='lazydocker'
 
 eval "$(starship init zsh)"
