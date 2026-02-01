@@ -8,6 +8,8 @@ alias ls='ls --color'
 alias ll='ls -la'
 alias lzd='lazydocker'
 
+source ~/config-files/.zsh_aliases
+
 eval "$(starship init zsh)"
 
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
