@@ -12,6 +12,11 @@ alias lzd='lazydocker'
 
 source ~/config-files/.zsh_aliases
 
+autoload -Uz compinit
+compinit
+
+eval "$(zoxide init zsh)"
+
 eval "$(starship init zsh)"
 
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
