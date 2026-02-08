@@ -1,3 +1,6 @@
+alias cg='curl google.com'
+alias cb='curl baidu.com'
+
 alias gc='git clone'
 
 alias ez='eza -l -F --time-style=iso'
