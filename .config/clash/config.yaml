@@ -1,0 +1,158 @@
+#==========================================
+# @ConfigName  自用Clash配置文件（copy自墨鱼）
+# @Author      @ztm0929
+# @FromURL     https://raw.githubusercontent.com/ddgksf2013/Profile/master/ClashforWindows.yaml
+# @ClashDoc    https://clash.wiki
+# @MihomoDoc   https://wiki.metacubex.one
+#==========================================
+
+port: 7890           # HTTP 代理端口
+socks-port: 7891     # Socks 端口
+redir-port: 7892     # Redir 端口
+mixed-port: 7893     # 混合端口
+allow-lan: true      # 允许局域网连接
+bind-address: "*"    # 地址绑定
+mode: rule           # 规则模式
+log-level: info      # 日志级别
+ipv6: false          # IPV6开关
+external-controller: 127.0.0.1:9090
+
+dns:
+  enable: true       # 不使用系统 DNS
+  ipv6: false        # 关闭 IPV6
+  listen: 0.0.0.0:53 # dns 监听
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - "*.lan"
+    - localhost.ptlogin2.qq.com
+    - +.srv.nintendo.net
+    - +.stun.playstation.net
+    - +.msftconnecttest.com
+    - +.msftncsi.com
+    - +.xboxlive.com
+    - msftconnecttest.com
+    - xbox.*.microsoft.com
+    - cwpt.szu.edu.cn
+    - "*.battlenet.com.cn"
+    - "*.battlenet.com"
+    - "*.blzstatic.cn"
+    - "*.battle.net"
+  nameserver:        # 默认 DNS 服务
+    - 223.5.5.5
+    - 119.29.29.29
+  fallback:          # 国外 DNS 服务器
+    - https://cloudflare-dns.com/dns-query
+    - https://dns.google/dns-query
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    domain:
+    - +.okx.com
+    ipcidr:
+      - 240.0.0.0/4
+#========= 建立锚点 =========#
+
+# 策略组引用
+pr:   &a3 {type: select,   proxies: [♻️ 自动选择, 🚀 手动切换, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇺🇲 美国节点, 🇨🇳 台湾节点, 🇸🇬 狮城节点, DIRECT] }
+p:    &a1 {type: http,     interval: 86400,  health-check: {enable: true, url: http://www.gstatic.com/generate_204, interval: 1800} }
+auto: &a4 {type: url-test, lazy: true,  url: http://www.gstatic.com/generate_204, interval: 900, use: [Subscribe, SSR] }
+use:  &a2 {type: select,   use: [Subscribe, SSR] }
+c:    &a6 {type: http,     behavior: classical, interval: 86400}
+d:    &a5 {type: http,     behavior: domain,    interval: 86400}
+i:    &a7 {type: http,     behavior: ipcidr,    interval: 86400}
+
+# 花括号内的 URL 需要替换为实际的服务器地址或订阅链接
+proxy-providers:
+  ztm0929:
+    <<: *a1
+    url: https://api.subcsub.com/sub?target=clash&url={{server_url}}&emoji=true&list=true&new_name=true&udp=true&config=https%3A%2F%2Fgist.githubusercontent.com%2Fztm0929%2F8183bfdad8547f39902e443c08efb837%2Fraw%2Fsubconverter_config.ini
+    override:
+      proxy-name:
+        - pattern: "ztm0929@icloud\\.com"
+          target: "ztm0929.net"
+        - pattern: "\\|"
+          target: "丨"
+    path: ./proxy_providers/ztm0929.yaml
+  SSRDOG:
+    <<: *a1
+    url: {{sub_url}}
+    exclude-filter: "GB \\|`Traffic Reset`Expire Date"
+    override:
+      additional-suffix: "丨dog.ssrdog.com"
+    path: ./proxy_providers/SSRDOG.yaml
+    
+   
+    
+proxies: null
+proxy-groups:
+#分流分组
+  - {name: 🚀 手动切换, <<: *a2}
+  - {name: 🌏 全球加速, <<: *a3}
+  - {name: 🍎 苹果服务, <<: *a3}
+  - {name: 📺 哔哩哔哩, type: select, proxies: [DIRECT, 🇭🇰 香港节点, 🇨🇳 台湾节点]}
+  - {name: 🤖 OpenAi, <<: *a3}
+  - {name: 🎬 国际媒体, type: select, proxies: [🇸🇬 狮城节点, 🚀 手动切换]}
+  - {name: 🌌 谷歌服务, <<: *a3}
+  - {name: 📟 电报消息, <<: *a3}
+  - {name: 🐦 推特服务, <<: *a3}
+  - {name: 🎮 游戏平台, type: select, proxies: [DIRECT, 🇭🇰 香港节点, 🚀 手动切换]}
+  - {name: 🆎 AdBlock, type: select, proxies: [REJECT, 🚀 手动切换]}
+  - {name: 🐟 兜底分流, <<: *a3}
+  - {name: ⚡️ 测速专用, <<: *a3}
+  
+#节点分组
+  - {name: ♻️ 自动选择, <<: *a4}
+  - {name: 🇭🇰 香港节点, <<: *a4, filter: "香港|HK|(?i)Hong"                  }              # a4更改为a2，即为手动选择
+  - {name: 🇯🇵 日本节点, <<: *a4, filter: "日|东京|JP|(?i)Japan"              }              # a4更改为a2，即为手动选择     
+  - {name: 🇨🇳 台湾节点, <<: *a4, filter: "台|湾|TW|(?i)Taiwan"               }              # a4更改为a2，即为手动选择
+  - {name: 🇺🇲 美国节点, <<: *a4, filter: "美|US|(?i)States|American"         }              # a4更改为a2，即为手动选择
+  - {name: 🇸🇬 狮城节点, <<: *a4, filter: "新|坡|SG|(?i)Singapore"            }              # a4更改为a2，即为手动选择
+
+# 分流规则 
+rule-providers:
+  Direct:      {<<: *a5, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Direct/Direct.yaml,                      path: ./ruleset/Direct.yaml       }
+  Lan:         {<<: *a6, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Lan/Lan.yaml,                            path: ./ruleset/Lan.yaml          }
+  Download:    {<<: *a6, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Download/Download.yaml,                  path: ./ruleset/Download.yaml     }
+  Ad:          {<<: *a5, url: https://anti-ad.net/clash.yaml,                                                                                     path: ./ruleset/anti-ad-clash.yaml}
+  OpenAi:      {<<: *a6, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OpenAI/OpenAI.yaml,                      path: ./ruleset/OpenAi.yaml       }
+  BiliBili:    {<<: *a6, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/BiliBili/BiliBili.yaml,                  path: ./ruleset/BiliBili.yaml     }
+  GlobalMedia: {<<: *a6, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GlobalMedia/GlobalMedia_Classical.yaml,  path: ./ruleset/GlobalMedia.yaml  }
+  Apple:       {<<: *a6, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Apple/Apple_Classical.yaml,              path: ./ruleset/Apple.yaml        }
+  Github:      {<<: *a6, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GitHub/GitHub.yaml,                      path: ./ruleset/Github.yaml       }
+  Tiktok:      {<<: *a6, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/TikTok/TikTok.yaml,                      path: ./ruleset/Tiktok.yaml       }
+  OKX:         {<<: *a6, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OKX/OKX.yaml,                           path: ./ruleset/OKX.yaml          }
+  Microsoft:   {<<: *a6, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Microsoft/Microsoft.yaml,                path: ./ruleset/Microsoft.yaml    }
+  Google:      {<<: *a6, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Google/Google.yaml,                      path: ./ruleset/Google.yaml       }
+  Telegram:    {<<: *a6, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Telegram/Telegram.yaml,                  path: ./ruleset/Telegram.yaml     }
+  Twitter:     {<<: *a6, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Twitter/Twitter.yaml,                    path: ./ruleset/Twitter.yaml      }
+  Speedtest:   {<<: *a6, url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Speedtest/Speedtest.yaml,          path: ./ruleset/Speedtest.yaml    }
+  Game:        {<<: *a6, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Game/Game.yaml,                          path: ./ruleset/Game.yaml         }
+  ChinaIP:     {<<: *a7, url: https://cdn.jsdelivr.net/gh/soffchen/GeoIP2-CN@release/clash-rule-provider.yml,                                     path: ./ruleset/ChinaIP.yaml      }
+  ProxyLite:   {<<: *a6, url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/ProxyLite/ProxyLite.yaml,                path: ./ruleset/ProxyLite.yaml    }
+
+ # 分流Policy 
+rules:
+  - RULE-SET,Direct,DIRECT
+  - RULE-SET,Lan,DIRECT
+  - RULE-SET,Download,DIRECT
+  - RULE-SET,Ad,🆎 AdBlock
+  - RULE-SET,OpenAi,🤖 OpenAi
+  - RULE-SET,BiliBili,📺 哔哩哔哩
+  - DOMAIN-SUFFIX,gspe1-ssl.ls.apple.com,DIRECT
+  - DOMAIN-SUFFIX,sportsteam368.com,DIRECT
+  - DOMAIN-SUFFIX,cwpt.szu.edu.cn,DIRECT,no-resolve
+  - RULE-SET,Tiktok,🎬 国际媒体
+  - RULE-SET,GlobalMedia,🎬 国际媒体
+  - RULE-SET,Apple,🍎 苹果服务
+  - RULE-SET,Github,🌏 全球加速
+  - RULE-SET,OKX,🌏 全球加速
+  - RULE-SET,Microsoft, 🌏 全球加速
+  - RULE-SET,Google,🌌 谷歌服务
+  - RULE-SET,Telegram,📟 电报消息
+  - RULE-SET,Twitter,🌏 全球加速
+  - RULE-SET,Game,🎮 游戏平台
+  - RULE-SET,ProxyLite,🌏 全球加速
+  - RULE-SET,ChinaIP,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,🐟 兜底分流
