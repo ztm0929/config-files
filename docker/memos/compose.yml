@@ -1,0 +1,8 @@
+services:
+  memos:
+    image: ghcr.io/usememos/memos:canary
+    container_name: memos
+    restart: unless-stopped
+    ports:
+      - "5230:5230"
+    volumes:
